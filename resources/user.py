@@ -55,6 +55,7 @@ class User(MethodView):
         user = UserModel.query.get_or_404(user_id)
         return(user)
 
+    @jwt_required(fresh=True)
     @blp.arguments(UserUpdateSchema)
     @blp.response(200, UserUpdateSchema)
     def put(self, user_data, user_id):
@@ -68,7 +69,8 @@ class User(MethodView):
         db.session.commit()
 
         return user
-    @jwt_required()
+
+    @jwt_required(fresh=True)
     def delete(self, user_id):
         jwt = get_jwt()
         if not jwt.get("is_admin"):
@@ -105,7 +107,7 @@ class TokenRefresh(MethodView):
 
 @blp.route("/logout")
 class UserLogout(MethodView):
-    @jwt_required
+    @jwt_required()
     def post(self):
         jti = get_jwt()["jti"]
         BLOCKLIST.add(jti)

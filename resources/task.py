@@ -16,7 +16,7 @@ blp = Blueprint("tasks", __name__, description="Operations on tasks")
 
 @blp.route("/task")
 class TaskCreate(MethodView):
-    @jwt_required(refresh=True)
+    @jwt_required()
     @blp.arguments(TaskSchema)
     def post(self, task_data):
         task = TaskModel(**task_data)
@@ -25,9 +25,7 @@ class TaskCreate(MethodView):
             db.session.add(task)
             db.session.commit()
         except SQLAlchemyError as e:
-            # return(str(e))
             abort(500, message="An error occurred while inserting the task.")
-            # abort(500, mes)
 
 
         return {"message": "Task created successfully"}, 201
@@ -39,7 +37,8 @@ class Task(MethodView):
     def get(self, task_id):
         task = TaskModel.query.get_or_404(task_id)
         return(task)
-    @jwt_required()
+
+    @jwt_required(fresh=True)
     def delete(self, task_id):
         task = TaskModel.query.get_or_404(task_id)
         db.session.delete(task)
@@ -65,7 +64,7 @@ class TaskUserTaskLink(MethodView):
 
         return task
 
-    @jwt_required()
+    @jwt_required(fresh=True)
     def delete(self, task_id, usertask_id):
         task = TaskModel.query.get_or_404(task_id)
         usertask = UserTaskModel.query.get_or_404(usertask_id)

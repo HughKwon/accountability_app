@@ -36,7 +36,7 @@ class UserTaskList(MethodView):
         user = UserModel.query.get_or_404(user_id)
         return UserTaskModel.query.filter_by(user_id=user_id).all()
 
-    @jwt_required()
+    @jwt_required(fresh=True)
     def delete(self, usertask_id):
         usertask = UserTaskModel.query.get_or_404(usertask_id)
         db.session.delete(usertask)

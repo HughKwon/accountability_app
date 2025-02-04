@@ -46,7 +46,7 @@ class Project(MethodView):
 
         return project
 
-    @jwt_required()
+    @jwt_required(fresh=True)
     def delete(self, user_id, project_id):
         project = ProjectModel.query.filter_by(
             user_id = user_id,
